@@ -6,6 +6,7 @@ import com.crud.jwt.models.JwtResponse;
 import com.crud.model.User;
 import com.crud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,12 +25,6 @@ import javax.validation.Valid;
 @CrossOrigin
 public class UserController {
 
-
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UserService userService;
 
@@ -42,31 +37,19 @@ public class UserController {
 //    }
 
     @PostMapping(value = "/user/register",
-            consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+            consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},
+            produces = {"application/json","application/xml"})
     public ResponseEntity register(@Valid @RequestBody User user){
-
-        return userService.createUser(user);
+        return userService.createUser(user)? new ResponseEntity<>("Registration Successful", HttpStatus.CREATED)
+                : new ResponseEntity("Username already taken",HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping(value = "/user/authenticate")
+
+    @PostMapping(value = "/user/authenticate",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
     public ResponseEntity authenticate(@RequestBody JwtRequest request) throws Exception {
-
-        check(request.getUserId(), request.getPassword());
-
-        final UserDetails userDetails = userService
-                .loadUserByUsername(request.getUserId());
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(userService.authenticate(request)));
     }
 
-    private void check(String username, String password) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
-    }
+
 }
 

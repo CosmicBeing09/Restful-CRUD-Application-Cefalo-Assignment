@@ -6,8 +6,6 @@ import com.crud.repository.PostRepository;
 import com.crud.repository.UserRepository;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,12 +27,15 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    public String createPost(String userId,Post post){
+    public Boolean createPost(String userId,Post post){
 
-        User tempUser = userRepository.getOne(userId);
-        post.setUser(tempUser);
-        postRepository.save(post);
-        return "Post created successfully";
+        Optional<User> tempUser = userRepository.findById(userId);
+
+        return tempUser.map(t -> {
+            post.setUser(t);
+            postRepository.save(post);
+            return true;
+        }).orElseGet(() -> false);
     }
 
     public Optional<Post> retrievePostById(Long postId){
@@ -42,10 +43,8 @@ public class PostService {
     }
 
     public List<Post> retrieveAllPost(){
-
         temp = new ArrayList<>();
         postRepository.findAll().forEach(temp::add);
-
         return temp;
     }
 
@@ -53,7 +52,7 @@ public class PostService {
         return postRepository.findAllPostByUserId(userId);
     }
 
-    public ResponseEntity updatePost(Post post){
+    public Boolean updatePost(Post post){
         Optional<Post> tempPost = postRepository.findById(post.getId());
 
         return tempPost.map(temp -> {
@@ -66,20 +65,19 @@ public class PostService {
             post.setDate(temp.getDate());
             post.setUser(temp.getUser());
             postRepository.save(post);
-            return new ResponseEntity<>("Updated", HttpStatus.OK);
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+            return true;
+        }).orElseGet(() -> false);
 
     }
 
-    public ResponseEntity deletePost(Long postId){
+    public Boolean deletePost(Long postId){
 
         try {
             postRepository.deleteById(postId);
-            return new ResponseEntity("Deleted",HttpStatus.OK);
+            return true;
         }catch (Exception e){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return false;
         }
-
 
     }
 

@@ -23,41 +23,42 @@ public class PostController {
     }
 
 
-    @PostMapping(value = "/create-post/{userId}",consumes = {"application/json","application/xml"})
+    @PostMapping(value = "/post/{userId}",consumes = {"application/json","application/xml"},produces = {"application/json","application/xml"})
     @ResponseBody
-    public String createPost(@RequestBody Post post, @PathVariable String userId){
-        return postService.createPost(userId,post);
+    public ResponseEntity createPost(@RequestBody Post post, @PathVariable String userId){
+        return postService.createPost(userId,post)? new ResponseEntity<>("Post created",HttpStatus.CREATED)
+                : new ResponseEntity<>("Bad Request",HttpStatus.BAD_REQUEST);
     }
 
 
-    @GetMapping(value = "/retrieve-all-post",produces = {"application/json","application/xml"})
+    @GetMapping(value = "/posts",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
     public List<Post> retrieveAllPost(){
         return postService.retrieveAllPost();
     }
 
 
-    @GetMapping(value = "/retrieve-post-by-id/{post-id}",produces = {"application/json","application/xml"})
-    public ResponseEntity retrievePostById(@PathVariable("post-id") Long postId){
-
+    @GetMapping(value = "/post/{postId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
+    public ResponseEntity retrievePostById(@PathVariable("postId") Long postId){
         Optional<Post> post = postService.retrievePostById(postId);
-
         return post.map(value -> new ResponseEntity<Post>(value, HttpStatus.OK)).orElseGet(() ->  ResponseEntity.notFound().build());
 
     }
 
-    @PutMapping(value = "/update-post",consumes = {"application/json","application/xml"})
+    @PutMapping(value = "/post",consumes = {"application/json","application/xml"},produces = {"application/json","application/xml"})
     public ResponseEntity updatePost(@RequestBody Post post){
-        return postService.updatePost(post);
+        return postService.updatePost(post)? new ResponseEntity<>("Updated Successfully",HttpStatus.OK)
+                :new ResponseEntity<>("No content",HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(value = "/retrieve-post-of-user/{userId}")
-    public List<Post> retrieveAllPostByUserId(@PathVariable String userId){
-        return postService.retrieveAllPostByUserId(userId);
+    @GetMapping(value = "/user-posts/{userId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
+    public ResponseEntity retrieveAllPostByUserId(@PathVariable String userId){
+        return new ResponseEntity<>(postService.retrieveAllPostByUserId(userId),HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/delete-post/{post-id}")
-    public ResponseEntity deletePost(@PathVariable("post-id")Long postId){
-        return postService.deletePost(postId);
+    @DeleteMapping(value = "/post/{postId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
+    public ResponseEntity deletePost(@PathVariable("postId")Long postId){
+        return postService.deletePost(postId)? new ResponseEntity<>("Deleted",HttpStatus.OK)
+                :new ResponseEntity<>("No content",HttpStatus.NOT_FOUND);
     }
 }
 

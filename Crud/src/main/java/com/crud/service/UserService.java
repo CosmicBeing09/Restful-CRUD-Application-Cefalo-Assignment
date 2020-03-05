@@ -1,10 +1,16 @@
 package com.crud.service;
 
+import com.crud.jwt.JwtTokenUtil;
+import com.crud.jwt.models.JwtRequest;
 import com.crud.model.User;
 import com.crud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +27,10 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
 //    @Autowired
 //    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder){
@@ -29,18 +39,33 @@ public class UserService implements UserDetailsService {
 //    }
 
 
-    public ResponseEntity createUser(User user){
+    public Boolean createUser(User user){
         Optional<User> userOptional = userRepository.findById(user.getUserId());
-        return userOptional.map(t -> ResponseEntity.badRequest().body("Username already taken"))
+        return userOptional.map(t -> false)
                 .orElseGet(() -> {
                     String hashPass = passwordEncoder.encode(user.getPassword());
                     user.setPassword(hashPass);
                     userRepository.save(user);
-                    return new ResponseEntity<String>("Registration Successful", HttpStatus.CREATED);
+                    return true;
                 });
+    }
 
+    public String authenticate(JwtRequest request) throws Exception {
+        check(request.getUserId(), request.getPassword());
 
+        final UserDetails userDetails = loadUserByUsername(request.getUserId());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        return token;
+    }
 
+    private void check(String username, String password) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
     }
 
 

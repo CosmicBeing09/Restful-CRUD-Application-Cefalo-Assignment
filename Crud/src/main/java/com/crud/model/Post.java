@@ -17,10 +17,7 @@ import java.util.Date;
 
 @Entity(name = "post")
 @Table(name = "post")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @JacksonXmlRootElement(localName = "post")
 public class Post{
@@ -41,7 +38,6 @@ public class Post{
 
     @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id",nullable = false)
-    @JsonManagedReference
-    @JsonIgnore
+    @JsonManagedReference @JsonIgnore
     private User user;
 }
