@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         httpSecurity.csrf().disable()
 
-                .authorizeRequests().antMatchers("/user/authenticate","/user/register").permitAll().
+                .authorizeRequests().antMatchers("/user/authenticate","/user/register","/posts").permitAll().
                         anyRequest().authenticated().and().
                         exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement().
                         sessionCreationPolicy(SessionCreationPolicy.STATELESS);

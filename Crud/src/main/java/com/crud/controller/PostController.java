@@ -32,8 +32,8 @@ public class PostController {
 
 
     @GetMapping(value = "/posts",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
-    public List<Post> retrieveAllPost(){
-        return postService.retrieveAllPost();
+    public List<Post> retrieveAllPost(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize){
+        return postService.retrieveAllPost(pageNo,pageSize);
     }
 
 

@@ -6,6 +6,9 @@ import com.crud.repository.PostRepository;
 import com.crud.repository.UserRepository;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,9 +45,11 @@ public class PostService {
         return postRepository.findById(postId);
     }
 
-    public List<Post> retrieveAllPost(){
+    public List<Post> retrieveAllPost(int pageNo,int pageSize){
         temp = new ArrayList<>();
-        postRepository.findAll().forEach(temp::add);
+        //postRepository.findAll().forEach(temp::add);
+        Pageable pageable = PageRequest.of(pageNo,pageSize, Sort.by("date").descending());
+        temp = postRepository.findAll(pageable).toList();
         return temp;
     }
 
