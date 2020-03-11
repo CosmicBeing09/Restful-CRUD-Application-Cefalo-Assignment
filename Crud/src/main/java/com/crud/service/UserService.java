@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
     }
 
     public String authenticate(JwtRequest request) throws Exception {
-        check(request.getUserId(), request.getPassword());
+       check(request.getUserId(), request.getPassword());
 
         final UserDetails userDetails = loadUserByUsername(request.getUserId());
         final String token = jwtTokenUtil.generateToken(userDetails);
@@ -72,6 +72,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User temp = userRepository.getOne(userId);
+
         return new org.springframework.security.core.userdetails.User(temp.getUserId(),temp.getPassword(),new ArrayList<>());
     }
 }

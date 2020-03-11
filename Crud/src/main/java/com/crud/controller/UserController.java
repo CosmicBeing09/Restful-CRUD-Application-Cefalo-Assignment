@@ -47,7 +47,7 @@ public class UserController {
 
     @PostMapping(value = "/user/authenticate",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
     public ResponseEntity authenticate(@RequestBody JwtRequest request) throws Exception {
-        return ResponseEntity.ok(new JwtResponse(userService.authenticate(request)));
+        return new ResponseEntity< >(new JwtResponse(userService.authenticate(request)),HttpStatus.OK);
     }
 
 
