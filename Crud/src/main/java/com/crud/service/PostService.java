@@ -5,10 +5,12 @@ import com.crud.model.User;
 import com.crud.repository.PostRepository;
 import com.crud.repository.UserRepository;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -57,33 +59,59 @@ public class PostService {
         return postRepository.findAllPostByUserId(userId);
     }
 
-    public Boolean updatePost(Post post){
+    public Boolean updatePost(Post post, UserDetails userDetails){
         Optional<Post> tempPost = postRepository.findById(post.getId());
 
+
         return tempPost.map(temp -> {
-            if (post.getTitle().replaceAll("\\s+","").isEmpty()){
-                post.setTitle(temp.getTitle());
+
+            if(userDetails.getUsername().equals(temp.getUser().getUserId())) {
+                if (post.getTitle().replaceAll("\\s+", "").isEmpty()) {
+                    post.setTitle(temp.getTitle());
+                }
+                if (post.getBody().replaceAll("\\s+", "").isEmpty()) {
+                    post.setBody(temp.getBody());
+                }
+                post.setDate(temp.getDate());
+                post.setUser(temp.getUser());
+                postRepository.save(post);
+                return true;
             }
-            if(post.getBody().replaceAll("\\s+","").isEmpty()){
-                post.setBody(temp.getBody());
+            else{
+                return false;
             }
-            post.setDate(temp.getDate());
-            post.setUser(temp.getUser());
-            postRepository.save(post);
-            return true;
         }).orElseGet(() -> false);
 
     }
 
-    public Boolean deletePost(Long postId){
+    public Boolean deletePost(Long postId,UserDetails userDetails){
+
+        Optional<Post> tempPost = postRepository.findById(postId);
 
         try {
-            postRepository.deleteById(postId);
-            return true;
+            if(tempPost.isPresent()){
+               if(tempPost.get().getUser().getUserId().equals(userDetails.getUsername())){
+                   postRepository.deleteById(postId);
+                   return true;
+               }
+               else {
+                   return false;
+               }
+            }
+            else {
+                return false;
+            }
+
+
         }catch (Exception e){
             return false;
         }
 
+    }
+
+    public int totalDataSize(){
+        Iterable<Post> posts = postRepository.findAll();
+        return IterableUtils.size(posts);
     }
 
 

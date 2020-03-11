@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -28,8 +29,11 @@ public class Post{
     private Long id;
 
     @Size(max = 250)
+    @NotNull
     private String title;
 
+    @Size(max = 10000)
+    @NotNull
     private String body;
 
     @CreationTimestamp
@@ -40,4 +44,10 @@ public class Post{
     @JoinColumn(name = "user_id",referencedColumnName = "user_id",nullable = false)
     @JsonManagedReference @JsonIgnore
     private User user;
+
+    public Post(Long id,String title,String body){
+        this.id = id;
+        this.title = title;
+        this.body = body;
+    }
 }
