@@ -65,6 +65,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 //System.out.println(SecurityContextHolder.getContext().getAuthentication());
             }
         }
+        httpServletResponse.setHeader(
+                "Cache-Control", "must-revalidate");
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }
