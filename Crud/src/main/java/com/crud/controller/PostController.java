@@ -40,6 +40,11 @@ public class PostController{
         return postService.retrieveAllPost(pageNo,pageSize);
     }
 
+    @GetMapping(value = "/posts/search",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
+    public List<Post> searchPost(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize, @RequestParam("text")String pattern){
+        return postService.searchPost(pattern,pageNo,pageSize);
+    }
+
 
     @GetMapping(value = "/post/{postId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
     public ResponseEntity retrievePostById(@PathVariable("postId") Long postId){

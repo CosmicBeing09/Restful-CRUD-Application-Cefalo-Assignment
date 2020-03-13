@@ -5,8 +5,6 @@ import com.crud.jwt.models.JwtRequest;
 import com.crud.model.User;
 import com.crud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -31,12 +29,6 @@ public class UserService implements UserDetailsService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
-//    @Autowired
-//    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder){
-//        this.userRepository = userRepository;
-//        this.passwordEncoder = passwordEncoder;
-//    }
 
 
     public Boolean createUser(User user){
