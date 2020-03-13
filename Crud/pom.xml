@@ -101,6 +101,11 @@
 			<artifactId>commons-collections4</artifactId>
 			<version>4.1</version>
 		</dependency>
+		<dependency>
+			<groupId>de.ixilon</groupId>
+			<artifactId>etag-header-spring-boot-autoconfigure</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

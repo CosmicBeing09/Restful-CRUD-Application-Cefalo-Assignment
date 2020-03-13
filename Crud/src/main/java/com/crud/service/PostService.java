@@ -55,6 +55,11 @@ public class PostService {
         return temp;
     }
 
+    public List<Post> searchPost(String pattern,int pageNo, int pageSize){
+        Pageable pageable = PageRequest.of(pageNo,pageSize, Sort.by("date").descending());
+        return postRepository.searchPost(pattern,pageable);
+    }
+
     public List<Post> retrieveAllPostByUserId(String userId){
         return postRepository.findAllPostByUserId(userId);
     }
