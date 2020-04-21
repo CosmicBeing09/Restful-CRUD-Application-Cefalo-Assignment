@@ -27,7 +27,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+    public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 
 
         final String requestTokenHeader = httpServletRequest.getHeader("Authorization");
@@ -47,7 +47,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         else {
             logger.warn("JWT Token does not begin with Bearer String");
         }
-
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 

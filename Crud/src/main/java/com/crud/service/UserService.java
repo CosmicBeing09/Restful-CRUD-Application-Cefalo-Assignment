@@ -33,6 +33,7 @@ public class UserService implements UserDetailsService {
 
     public Boolean createUser(User user){
         Optional<User> userOptional = userRepository.findById(user.getUserId());
+
         return userOptional.map(t -> false)
                 .orElseGet(() -> {
                     String hashPass = passwordEncoder.encode(user.getPassword());
@@ -64,7 +65,6 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User temp = userRepository.getOne(userId);
-
         return new org.springframework.security.core.userdetails.User(temp.getUserId(),temp.getPassword(),new ArrayList<>());
     }
 }
