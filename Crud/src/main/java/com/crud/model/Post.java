@@ -49,4 +49,19 @@ public class Post{
         this.title = title;
         this.body = body;
     }
+
+    public Post(String title,String body,User user,Date date){
+        this.title = title;
+        this.body = body;
+        this.user = user;
+        this.date = date;
+    }
+
+    public Post(Long id,String title,String body,User user,Date date){
+        this.id = id;
+        this.title = title;
+        this.body = body;
+        this.user = user;
+        this.date = date;
+    }
 }

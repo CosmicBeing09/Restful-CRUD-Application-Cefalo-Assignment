@@ -18,7 +18,6 @@ import java.util.Optional;
 @RestController
 public class PostController{
 
-    @Autowired
     private PostService postService;
 
     @Autowired

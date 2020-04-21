@@ -65,8 +65,9 @@ public class PostService {
     }
 
     public Boolean updatePost(Post post, UserDetails userDetails){
-        Optional<Post> tempPost = postRepository.findById(post.getId());
+        System.out.println(post.getId());
 
+        Optional<Post> tempPost = postRepository.findById(post.getId());
 
         return tempPost.map(temp -> {
 
