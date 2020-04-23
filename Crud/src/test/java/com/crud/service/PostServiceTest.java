@@ -1,6 +1,5 @@
 package com.crud.service;
 
-import com.crud.config.FileStorageProperties;
 import com.crud.model.Post;
 import com.crud.model.User;
 import com.crud.repository.PostRepository;
