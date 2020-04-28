@@ -81,4 +81,5 @@ public class PostControllerIntegrationTest {
                 .content(json))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
+
 }

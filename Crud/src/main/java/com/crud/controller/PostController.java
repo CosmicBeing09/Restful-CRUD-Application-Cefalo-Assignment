@@ -5,6 +5,7 @@ import com.crud.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -74,5 +75,9 @@ public class PostController{
         return new ResponseEntity<>(postService.totalDataSize(),HttpStatus.OK);
     }
 
+    @Scheduled(fixedDelay = 20000)
+    public void test(){
+        postService.publishPost();
+    }
 }
 

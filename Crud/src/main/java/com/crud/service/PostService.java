@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class PostService {
     private UserRepository userRepository;
 
     @JacksonXmlElementWrapper(localName = "posts")
-    private List<Post> temp = new ArrayList<>();
+    private List<Post> temp;
 
     @Autowired
     public PostService(PostRepository postRepository,UserRepository userRepository){
@@ -49,9 +50,10 @@ public class PostService {
 
     public List<Post> retrieveAllPost(int pageNo,int pageSize){
         temp = new ArrayList<>();
-        //postRepository.findAll().forEach(temp::add);
+
         Pageable pageable = PageRequest.of(pageNo,pageSize, Sort.by("date").descending());
-        temp = postRepository.findAll(pageable).toList();
+        temp = postRepository.findAllByPage(pageable);
+
         return temp;
     }
 
@@ -118,6 +120,19 @@ public class PostService {
     public int totalDataSize(){
         Iterable<Post> posts = postRepository.findAll();
         return IterableUtils.size(posts);
+    }
+
+    public void publishPost(){
+        ArrayList<Post> allPost = (ArrayList<Post>) postRepository.findAll();
+        for(int i=0;i<allPost.size();i++){
+            Post temp = allPost.get(i);
+            if(!temp.getIsDrafted()){
+                if(!temp.getIsPublished() && temp.getPublishDate().before(new Date())){
+                    temp.setIsPublished(true);
+                    postRepository.save(temp);
+                }
+            }
+        }
     }
 
 
