@@ -55,7 +55,7 @@ public class PostServiceTest {
 
         //Mockito.doReturn(page).when(postRepository).findAll(any(Pageable.class));
         Mockito.when(postRepository.findAll(any(Pageable.class))).thenReturn(page);
-        Mockito.when(postRepository.findAll()).thenReturn(page);
+        Mockito.when(postRepository.findAll()).thenReturn(postList);
         Mockito.when(postRepository.save(new Post())).thenReturn(post);
 
         //Optional<User> optUser = Optional.empty();

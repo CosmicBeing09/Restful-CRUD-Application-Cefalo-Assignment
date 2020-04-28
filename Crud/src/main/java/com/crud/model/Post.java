@@ -39,10 +39,17 @@ public class Post{
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date publishDate;
+
     @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id",nullable = false)
     @JsonManagedReference @JsonIgnore
     private User user;
+
+    private Boolean isPublished;
+
+    private Boolean isDrafted;
 
     public Post(Long id,String title,String body){
         this.id = id;
