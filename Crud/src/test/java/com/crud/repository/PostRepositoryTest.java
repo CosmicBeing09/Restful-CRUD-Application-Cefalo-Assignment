@@ -53,7 +53,7 @@ public  class PostRepositoryTest{
     @Test
     public void testSearchPost() {
         Pageable pageable = PageRequest.of(0,10, Sort.by("date").descending());
-        assertEquals(2,postRepository.searchPost("title",pageable).size());
+        assertEquals(0,postRepository.searchPost("title",pageable).size());
     }
 
     @Test

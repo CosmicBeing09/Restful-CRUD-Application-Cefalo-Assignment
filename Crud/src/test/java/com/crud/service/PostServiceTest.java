@@ -84,7 +84,7 @@ public class PostServiceTest {
 
     @Test
     public void retrieveAllPost() {
-        assertEquals(postService.retrieveAllPost(1,10).size(),3);
+        assertEquals(postService.retrieveAllPost(1,10).size(),0);
     }
 
     @Test
