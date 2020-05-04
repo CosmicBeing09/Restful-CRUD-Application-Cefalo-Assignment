@@ -39,7 +39,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     public void register() throws Exception {
-        User user = new User("raihan123", "raihan", "rai123");
+        User user = new User("raihan1234", "raihan", "rai123");
         Gson gson = new Gson();
         String json = gson.toJson(user);
 
@@ -53,9 +53,17 @@ public class UserControllerIntegrationTest {
 
     @Test
     public void authenticate() throws Exception {
-        JwtRequest user = new JwtRequest("raihan123", "rai123");
+        JwtRequest user = new JwtRequest("raihan737", "abc");
         Gson gson = new Gson();
         String json = gson.toJson(user);
+
+        User createUser = new User("raihan737", "raihan", "abc");
+        String registrationBody = gson.toJson(createUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_XML)
+                .content(registrationBody))
+                .andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/authenticate")
                 .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
