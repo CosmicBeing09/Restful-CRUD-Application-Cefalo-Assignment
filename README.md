@@ -33,7 +33,12 @@
    
 4. Go to **Restful-CRUD-Application-Cefalo-Assignment-master\Crud\target**  folder and hit this command to run the application
    > java -jar Crud-0.0.1-SNAPSHOT.jar
-
+   
+   Or, you can use this **maven** command to run the application
+   > mvn spring-boot:run
+   
+   Or, you can also use this **gradle** command to tun the application if you want to use gradle
+   > gradle bootRun
 
 
 
