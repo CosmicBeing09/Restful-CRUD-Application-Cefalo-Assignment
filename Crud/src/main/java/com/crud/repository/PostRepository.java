@@ -1,6 +1,7 @@
 package com.crud.repository;
 
 import com.crud.model.Post;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -25,4 +26,6 @@ public interface PostRepository extends PagingAndSortingRepository<Post,Long> {
 
     @Query("select p from post p where isPublished = 1 and isDrafted = 0")
     List<Post> findAllByPage(Pageable pageable);
+
+    Page<Post> findAllByTags_NameAndIsDraftedFalseAndIsPublishedTrue(Pageable pageable,String name);
 }

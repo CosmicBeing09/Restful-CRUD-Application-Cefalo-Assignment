@@ -1,8 +1,11 @@
 package com.crud.service;
 
 import com.crud.model.Post;
+import com.crud.model.Tag;
 import com.crud.model.User;
+import com.crud.model.dao.PostDAO;
 import com.crud.repository.PostRepository;
+import com.crud.repository.TagRepository;
 import com.crud.repository.UserRepository;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import org.apache.commons.collections4.IterableUtils;
@@ -13,27 +16,45 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PostService {
 
     private PostRepository postRepository;
     private UserRepository userRepository;
+    private TagRepository tagRepository;
 
     @JacksonXmlElementWrapper(localName = "posts")
     private List<Post> temp;
 
     @Autowired
-    public PostService(PostRepository postRepository,UserRepository userRepository){
+    public PostService(PostRepository postRepository,UserRepository userRepository,TagRepository tagRepository){
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.tagRepository = tagRepository;
     }
 
-    public Boolean createPost(String userId,Post post){
+    public Boolean createPost(String userId, PostDAO postDAO){
+
+        Post post = new Post();
+        post.setIsPublished(postDAO.getIsPublished());
+        post.setBody(postDAO.getBody());
+        post.setTitle(postDAO.getTitle());
+        post.setIsDrafted(postDAO.getIsDrafted());
+        post.setPublishDate(postDAO.getPublishDate());
+
+
+        Set<Tag> finalTagSet = new HashSet<>();
+
+        Iterator<Tag> it = postDAO.getAlternateTags().iterator();
+        while (it.hasNext()){
+            Tag tag = tagRepository.save(it.next());
+            finalTagSet.add(tag);
+        }
+
+        finalTagSet.addAll(postDAO.getTags());
+        post.setTags(finalTagSet);
 
         Optional<User> tempUser = userRepository.findById(userId);
 
