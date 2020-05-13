@@ -14,6 +14,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "post")
 @Table(name = "post")
@@ -50,6 +52,9 @@ public class Post{
     private Boolean isPublished;
 
     private Boolean isDrafted;
+
+    @ManyToMany
+    private Set<Tag> tags = new HashSet<>();
 
     public Post(Long id,String title,String body){
         this.id = id;

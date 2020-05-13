@@ -3,6 +3,7 @@ package com.crud.controller;
 import com.crud.jwt.JwtTokenUtil;
 import com.crud.model.Post;
 import com.crud.model.User;
+import com.crud.model.dao.PostDAO;
 import com.crud.service.PostService;
 import com.crud.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -68,7 +69,7 @@ public class PostControllerTest {
 
         Mockito.when(userService.loadUserByUsername(any(String.class))).thenReturn(userDetails);
 
-        Mockito.when(postService.createPost(any(String.class), any(Post.class))).thenReturn(true);
+        Mockito.when(postService.createPost(any(String.class), any(PostDAO.class))).thenReturn(true);
         Mockito.when(postService.retrieveAllPost(any(Integer.class),any(Integer.class))).thenReturn(listPost);
         Mockito.when(postService.searchPost(any(String.class),any(Integer.class),any(Integer.class))).thenReturn(listPost);
         Mockito.when(postService.retrievePostById(any(Long.class))).thenReturn(Optional.empty());

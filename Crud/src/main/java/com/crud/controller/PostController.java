@@ -1,6 +1,7 @@
 package com.crud.controller;
 
 import com.crud.model.Post;
+import com.crud.model.dao.PostDAO;
 import com.crud.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class PostController{
 
     @PostMapping(value = "/post/{userId}",consumes = {"application/json","application/xml"},produces = {"application/json","application/xml"})
     @ResponseBody
-    public ResponseEntity createPost(@Valid @RequestBody Post post, @PathVariable String userId){
+    public ResponseEntity createPost(@Valid @RequestBody PostDAO post, @PathVariable String userId){
         return postService.createPost(userId,post)? new ResponseEntity<>("Post created",HttpStatus.CREATED)
                 : new ResponseEntity<>("Bad Request",HttpStatus.BAD_REQUEST);
     }
