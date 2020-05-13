@@ -4,7 +4,6 @@
 
   - JDK 8
   - Maven / Gradle
-  - MySQL server (e.g. XAMPP / WAMPP)
 
 
 # Steps to run the application:
@@ -18,7 +17,7 @@
 
    To install Maven on windows:
 
-     * Visit the Apache Maven site, download the Maven zip file of the latest version, and unzip the file to the folder that you want to use Maven in.
+     * Visit the Apache Maven site, download the Maven Binary zip file of the latest version, and unzip the file to the folder that you want to use Maven in.
 
      * Add both M2_HOME and MAVEN_HOME variables to the Windows environment variables (using system properties), and point them to your Maven folder.
 
@@ -29,21 +28,17 @@
     > mvn -version
  
     
-3.  Download and run XAMPP or WAMPP.
-
-4.  Create a database with the name : **crudapp** and set username and password as you like.
-
-5. Open *application.properties* of the project and change the follwing field as per your configuration
-
-   > **spring.datasource.url**=jdbc:mysql://{**localhost** or **Your loopback ip address**}/crudapp?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+3. Go to **Restful-CRUD-Application-Cefalo-Assignment-master\Crud** folder from command prompt and run this command:
+   > mvn install
    
-   > **spring.datasource.username**={Username you used to create the database}   //by default it is **root**
+4. Go to **Restful-CRUD-Application-Cefalo-Assignment-master\Crud\target**  folder and hit this command to run the application
+   > java -jar Crud-0.0.1-SNAPSHOT.jar
    
-   > **spring.datasource.password**={Username you used to create the database}   //by default it is blank
-
-
-
-6. Build and run the project from an IDE
+   Or, you can use this **maven** command to run the application
+   > mvn spring-boot:run
+   
+   Or, you can also use this **gradle** command to tun the application if you want to use gradle
+   > gradle bootRun
 
 
 
