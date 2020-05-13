@@ -60,7 +60,7 @@ public class PostService {
 
             if(exist.isPresent())
              finalTagSet.add(exist.get());
-            
+
             else
             finalTagSet.add(tagRepository.save(tag));
         }
