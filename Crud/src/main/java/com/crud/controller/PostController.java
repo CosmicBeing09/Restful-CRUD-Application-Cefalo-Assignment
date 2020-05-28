@@ -55,7 +55,7 @@ public class PostController{
     }
 
     @PutMapping(value = "/post",consumes = {"application/json","application/xml"},produces = {"application/json","application/xml"})
-    public ResponseEntity updatePost(@RequestBody Post post, Authentication authentication){
+    public ResponseEntity updatePost(@Valid @RequestBody Post post, Authentication authentication){
         return postService.updatePost(post, (UserDetails) authentication.getPrincipal())? new ResponseEntity<>("Updated Successfully",HttpStatus.OK)
                 :new ResponseEntity<>("No content",HttpStatus.BAD_REQUEST);
     }
@@ -76,8 +76,8 @@ public class PostController{
         return new ResponseEntity<>(postService.totalDataSize(),HttpStatus.OK);
     }
 
-    @Scheduled(fixedDelay = 20000)
-    public void test(){
+    @Scheduled(fixedDelay = 10000)
+    public void publishPost(){
         postService.publishPost();
     }
 }
