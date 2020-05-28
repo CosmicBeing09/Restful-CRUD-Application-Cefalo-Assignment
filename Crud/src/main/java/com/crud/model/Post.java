@@ -4,15 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +20,7 @@ import java.util.Set;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @JacksonXmlRootElement(localName = "post")
-public class Post{
+public class Post implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,6 +39,7 @@ public class Post{
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date publishDate;
 
@@ -49,8 +48,10 @@ public class Post{
     @JsonManagedReference @JsonIgnore
     private User user;
 
+    @NotNull
     private Boolean isPublished;
 
+    @NotNull
     private Boolean isDrafted;
 
     @ManyToMany

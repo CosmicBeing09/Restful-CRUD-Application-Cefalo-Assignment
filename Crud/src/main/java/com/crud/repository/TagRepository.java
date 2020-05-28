@@ -1,6 +1,5 @@
 package com.crud.repository;
 
-import com.crud.model.Post;
 import com.crud.model.Tag;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -12,4 +11,6 @@ import java.util.List;
 public interface TagRepository extends PagingAndSortingRepository<Tag,Long> {
     @Query("select t from Tag t")
     List<Tag> findAll();
+
+    Tag findByName(String name);
 }
