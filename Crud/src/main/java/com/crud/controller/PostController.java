@@ -10,8 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +33,6 @@ public class PostController{
                 : new ResponseEntity<>("Bad Request",HttpStatus.BAD_REQUEST);
     }
 
-
     @GetMapping(value = "/posts",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
     public List<Post> retrieveAllPost(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize){
         return postService.retrieveAllPost(pageNo,pageSize);
@@ -46,12 +43,16 @@ public class PostController{
         return postService.searchPost(pattern,pageNo,pageSize);
     }
 
-
     @GetMapping(value = "/post/{postId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
     public ResponseEntity retrievePostById(@PathVariable("postId") Long postId){
         Optional<Post> post = postService.retrievePostById(postId);
         return post.map(value -> new ResponseEntity<Post>(value, HttpStatus.OK)).orElseGet(() ->  ResponseEntity.notFound().build());
+    }
 
+    @PutMapping(value = "/post/view/{postId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
+    public ResponseEntity countView(@PathVariable("postId") Long postId){
+        Integer count = postService.incrementView(postId);
+        return new ResponseEntity<>(count,HttpStatus.OK);
     }
 
     @PutMapping(value = "/post",consumes = {"application/json","application/xml"},produces = {"application/json","application/xml"})
@@ -67,8 +68,14 @@ public class PostController{
 
     @DeleteMapping(value = "/post/{postId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
     public ResponseEntity deletePost(@PathVariable("postId")Long postId,Authentication authentication){
+
         return postService.deletePost(postId,(UserDetails)authentication.getPrincipal())? new ResponseEntity<>("Deleted",HttpStatus.OK)
                 :new ResponseEntity<>("No content",HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(value = "/posts/mostCommented",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
+    public List<Post> retrieveMostCommentedPost(@RequestParam("count") int count){
+        return postService.getMostCommentedPost(count);
     }
 
     @GetMapping(value = "/posts/size",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
@@ -76,7 +83,13 @@ public class PostController{
         return new ResponseEntity<>(postService.totalDataSize(),HttpStatus.OK);
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @GetMapping(value = "/posts/flush-cache",produces = {"application/json","application/xml"})
+    public ResponseEntity flushCache(){
+        return postService.flushCache()? new ResponseEntity<>("Hard Reloaded",HttpStatus.OK)
+                :new ResponseEntity<>("Failed to hard reload",HttpStatus.BAD_REQUEST);
+    }
+
+    @Scheduled(fixedDelay = 30000)
     public void publishPost(){
         postService.publishPost();
     }

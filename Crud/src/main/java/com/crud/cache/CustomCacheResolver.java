@@ -9,7 +9,6 @@ import org.springframework.cache.interceptor.CacheOperationInvocationContext;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.stereotype.Component;
-
 import java.util.*;
 
 
@@ -31,6 +30,8 @@ public class CustomCacheResolver implements CacheResolver {
         String method = cacheOperationInvocationContext.getMethod().toString();
         Post post = null;
         Long postId = null;
+        boolean isPostContained = false;
+
         if(method.contains("update")) {
             //get the updated post
             Object[] args = cacheOperationInvocationContext.getArgs();
@@ -43,12 +44,13 @@ public class CustomCacheResolver implements CacheResolver {
         }
 
 
+
         //read the cache
-        Cache ehCacheCache = cacheManager.getCache(CACHE_NAME);
+        Cache cache = cacheManager.getCache(CACHE_NAME);
 
         //get the concurrent cache map in key-value pair
-        assert ehCacheCache != null;
-        Map<SimpleKey, List<Post>> map = (Map<SimpleKey, List<Post>>) ehCacheCache.getNativeCache();
+        assert cache != null;
+        Map<SimpleKey, List<Post>> map = (Map<SimpleKey, List<Post>>) cache.getNativeCache();
 
         //Convert to set to iterate
         Set<Map.Entry<SimpleKey, List<Post>>> entrySet = map.entrySet();
@@ -62,33 +64,38 @@ public class CustomCacheResolver implements CacheResolver {
         }
 
         //get the list
-        assert entry != null;
-        List<Post> postList = entry.getValue();
+        if(entry!=null) {
+            List<Post> postList = entry.getValue();
 
-        if(method.contains("update")) {
-            //update it
-            for (Post temp : postList) {
+            if (method.contains("update")) {
+                //update it
+                for (Post temp : postList) {
+                    assert post != null;
+                    if (temp.getId().equals(post.getId())) {
+                        postList.remove(temp);
+                        isPostContained = true;
+                        break;
+                    }
+                }
                 assert post != null;
-                if (temp.getId().equals(post.getId())) {
-                    postList.remove(temp);
-                    break;
+                log.info(post.getIsDrafted().toString());
+                log.info(String.valueOf(post.getPublishDate().before(new Date())));
+                if (isPostContained && !post.getIsDrafted() && post.getPublishDate().before(new Date()))
+                    postList.add(post);
+            } else if (method.contains("delete")) {
+                //delete it
+                for (Post temp : postList) {
+                    if (temp.getId().equals(postId)) {
+                        postList.remove(temp);
+                        break;
+                    }
                 }
             }
-            postList.add(post);
-        }
-        else if(method.contains("delete")){
-            //delete it
-            for (Post temp : postList) {
-                if (temp.getId().equals(postId)) {
-                    postList.remove(temp);
-                    break;
-                }
-            }
-        }
 
 
-        //update the cache!! :D
-        ehCacheCache.put(entry.getKey(),postList);
+            //update the cache!! :D
+            cache.put(entry.getKey(), postList);
+        }
 
         return new ArrayList<>(Collections.singletonList(cacheManager.getCache(CACHE_NAME)));
     }

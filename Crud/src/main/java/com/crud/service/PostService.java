@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Slf4j
@@ -44,16 +43,23 @@ public class PostService {
     public Boolean createPost(String userId, PostDAO postDAO){
 
         Post post = new Post();
-        post.setIsPublished(postDAO.getIsPublished());
+
+        if(postDAO.getPublishDate()==null) postDAO.setPublishDate(new Date());
+
+        if(postDAO.getPublishDate().before(new Date()))
+            post.setIsPublished(true);
+        else post.setIsPublished(false);
+
         post.setBody(postDAO.getBody());
         post.setTitle(postDAO.getTitle());
         post.setIsDrafted(postDAO.getIsDrafted());
         post.setPublishDate(postDAO.getPublishDate());
+        post.setNoOfViews(0);
 
 
         Set<Tag> finalTagSet = new HashSet<>();
 
-        Iterator<Tag> it = postDAO.getAlternateTags().iterator();
+        Iterator<Tag> it = postDAO.getNewTags().iterator();
         while (it.hasNext()){
             Tag tag = it.next();
             Optional<Tag> exist = Optional.ofNullable(tagRepository.findByName(tag.getName()));
@@ -65,7 +71,7 @@ public class PostService {
             finalTagSet.add(tagRepository.save(tag));
         }
 
-        finalTagSet.addAll(postDAO.getTags());
+        finalTagSet.addAll(postDAO.getExistingTags());
         post.setTags(finalTagSet);
 
         Optional<User> tempUser = userRepository.findById(userId);
@@ -122,7 +128,12 @@ public class PostService {
                 post.setDate(temp.getDate());
                 post.setUser(temp.getUser());
                 post.setTags(temp.getTags());
-                post.setPublishDate(temp.getPublishDate());
+                //post.setPublishDate(temp.getPublishDate());
+                post.setComments(temp.getComments());
+                post.setNoOfViews(temp.getNoOfViews());
+                if(post.getPublishDate().before(new Date()))
+                post.setIsPublished(true);
+                else post.setIsPublished(false);
 
                 postRepository.save(post);
                 log.info("Post Updated");
@@ -163,31 +174,51 @@ public class PostService {
             log.error("Post Deletion Failed");
             return false;
         }
-
     }
 
 
     public int totalDataSize(){
-        Iterable<Post> posts = postRepository.findAll();
+        Iterable<Post> posts = postRepository.findAllByIsDraftedFalseAndIsPublishedTrue();
         log.info("Post Size Checked");
         return IterableUtils.size(posts);
     }
 
+    public List<Post> getMostCommentedPost(int count){
+        List<Post> allPostPublished = postRepository.findAllByIsDraftedFalseAndIsPublishedTrue();
+        allPostPublished.sort(Comparator.comparingLong(post -> post.getComments().size()));
+        Collections.reverse(allPostPublished);
+        return allPostPublished.subList(0,Math.min(count,allPostPublished.size()));
+    }
+
+    public Integer incrementView(Long postId){
+        Optional<Post> optPost = this.retrievePostById(postId);
+        if(optPost.isPresent()){
+            Post post = optPost.get();
+            post.setNoOfViews(post.getNoOfViews()+1);
+            postRepository.save(post);
+            return post.getNoOfViews();
+        }
+        else return 0;
+    }
 
     public void publishPost(){
         log.info("Post Publisher Invoked");
-        ArrayList<Post> allPost = (ArrayList<Post>) postRepository.findAll();
-        for(int i=0;i<allPost.size();i++){
-            Post temp = allPost.get(i);
-            if(!temp.getIsDrafted()){
-                if(!temp.getIsPublished() && temp.getPublishDate().before(new Date())){
-                    temp.setIsPublished(true);
-                    postRepository.save(temp);
-                }
+        ArrayList<Post> allPost = (ArrayList<Post>) postRepository.findAllByIsDraftedFalseAndIsPublishedFalse();
+        for (Post temp : allPost) {
+            if (temp.getPublishDate().before(new Date())) {
+                temp.setIsPublished(true);
+                postRepository.save(temp);
+                this.flushCache();
             }
+
         }
     }
 
+    @CacheEvict(allEntries = true)
+    public Boolean flushCache(){
+        log.info("Cache flushed");
+        return true;
+    }
 
 }
 

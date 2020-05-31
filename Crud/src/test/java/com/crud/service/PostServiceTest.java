@@ -52,7 +52,7 @@ public class PostServiceTest {
 
         final Page<Post> page = new PageImpl<>(postList);
 
-        //Mockito.doReturn(page).when(postRepository).findAll(any(Pageable.class));
+        Mockito.doReturn(page).when(postRepository).findAll(any(Pageable.class));
         Mockito.when(postRepository.findAll(any(Pageable.class))).thenReturn(page);
         Mockito.when(postRepository.findAll()).thenReturn(postList);
         Mockito.when(postRepository.save(new Post())).thenReturn(post);
@@ -64,6 +64,8 @@ public class PostServiceTest {
         Mockito.when(postRepository.findById(any(Long.class))).thenReturn(Optional.of(post));
         Mockito.when(postRepository.searchPost(any(String.class),any(Pageable.class))).thenReturn(postList);
         Mockito.when(postRepository.findAllPostByUserId(any(String.class))).thenReturn(postList);
+
+        Mockito.when(postRepository.findAllByIsDraftedFalseAndIsPublishedTrue()).thenReturn(postList);
     }
 
     @Test
@@ -99,7 +101,7 @@ public class PostServiceTest {
     @Test
     public void updatePost() {
         User user = new User("raihan123","raihan","rai123");
-        Post post = new Post(-2000L,"Test title","Test Body",user,new Date());
+        Post post = new Post(-2000L,"Test title","Test Body",new Date(),new Date(),user,true,false,null,null,0);
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUserId(),user.getPassword(),new ArrayList<>());
 

@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "post")
@@ -48,7 +49,6 @@ public class Post implements Serializable {
     @JsonManagedReference @JsonIgnore
     private User user;
 
-    @NotNull
     private Boolean isPublished;
 
     @NotNull
@@ -56,6 +56,11 @@ public class Post implements Serializable {
 
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();
+
+    @OneToMany
+    private List<Comment> comments;
+
+    private Integer noOfViews;
 
     public Post(Long id,String title,String body){
         this.id = id;
@@ -76,5 +81,13 @@ public class Post implements Serializable {
         this.body = body;
         this.user = user;
         this.date = date;
+    }
+
+    public Post(String title,String body,User user,Date publishDate,Boolean isDrafted){
+        this.title = title;
+        this.body = body;
+        this.user = user;
+        this.publishDate = publishDate;
+        this.isDrafted = isDrafted;
     }
 }
