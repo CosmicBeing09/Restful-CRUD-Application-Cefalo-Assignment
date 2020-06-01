@@ -28,19 +28,18 @@ public class TagService {
         return tagRepository.findAll();
     }
 
-    public Boolean deleteTag(Long id){
+    public Boolean deleteTagFromAllPostOfUser(Long id,String userId){
         Optional<Tag> tempTag = tagRepository.findById(id);
 
         try {
             if(tempTag.isPresent()){
-                    ArrayList<Post> allPost = (ArrayList<Post>) postRepository.findAll();
+                    ArrayList<Post> allPost = (ArrayList<Post>) postRepository.findAllPostByUserId(userId);
                     for(Post post : allPost){
                         if(post.getTags().contains(tempTag.get())){
                             post.getTags().remove(tempTag.get());
                             postRepository.save(post);
                         }
                     }
-                    tagRepository.deleteById(id);
                     return true;
             }
             else {
@@ -51,6 +50,23 @@ public class TagService {
         }catch (Exception e){
             return false;
         }
+    }
+
+    public Boolean deleteTagFromPost(Long postId,Long tagId){
+        Optional<Tag> tag = tagRepository.findById(tagId);
+        Optional<Post> post = postRepository.findById(postId);
+
+        return tag.map(tempTag -> {
+            try {
+
+                if(post.isPresent()){
+                post.get().getTags().remove(tempTag);
+                postRepository.save(post.get());
+                }else return false;
+
+            }catch (Exception e){return false;}
+            return true;
+        }).orElseGet(()-> false);
     }
 
     public List<Post> getAllPostByTagName(Integer pageNo,Integer pageSize,String name){

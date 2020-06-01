@@ -28,4 +28,8 @@ public interface PostRepository extends PagingAndSortingRepository<Post,Long> {
     List<Post> findAllByPage(Pageable pageable);
 
     Page<Post> findAllByTags_NameAndIsDraftedFalseAndIsPublishedTrue(Pageable pageable,String name);
+
+    List<Post> findAllByIsDraftedFalseAndIsPublishedTrue();
+
+    List<Post> findAllByIsDraftedFalseAndIsPublishedFalse();
 }

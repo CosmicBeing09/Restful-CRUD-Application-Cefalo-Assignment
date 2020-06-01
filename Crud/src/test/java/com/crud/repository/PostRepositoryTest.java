@@ -34,9 +34,9 @@ public  class PostRepositoryTest{
    @Before
    public void setUp(){
        User user = new User("raihan123","raihan","rai123");
-       Post post = new Post("Test title","Test Body",user,new Date());
-       Post post1 = new Post("Test title 1","Test Body 1",user,new Date());
-       Post post2 = new Post("diff","diff",user,new Date());
+       Post post = new Post("Test title","Test Body",user,new Date(),false);
+       Post post1 = new Post("Test title 1","Test Body 1",user,new Date(),false);
+       Post post2 = new Post("diff","diff",user,new Date(),false);
 
        entityManager.persist(user);
        entityManager.persist(post);
@@ -59,7 +59,7 @@ public  class PostRepositoryTest{
     @Test
     public void testGetOneById() {
         User user = new User("nafis123","nafis","rai123");
-        Post post = new Post("Hello","Hi",user,new Date());
+        Post post = new Post("Hello","Hi",user,new Date(),false);
 
         entityManager.persist(user);
         entityManager.persist(post);
