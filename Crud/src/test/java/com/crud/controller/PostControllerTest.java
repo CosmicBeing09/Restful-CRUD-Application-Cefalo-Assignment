@@ -27,6 +27,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +70,6 @@ public class PostControllerTest {
         token = JwtTokenUtil.generateToken(userDetails);
 
         Mockito.when(userService.loadUserByUsername(any(String.class))).thenReturn(userDetails);
-
         Mockito.when(postService.createPost(any(String.class), any(PostDAO.class))).thenReturn(true);
         Mockito.when(postService.retrieveAllPost(any(Integer.class),any(Integer.class))).thenReturn(listPost);
         Mockito.when(postService.searchPost(any(String.class),any(Integer.class),any(Integer.class))).thenReturn(listPost);
@@ -81,7 +82,8 @@ public class PostControllerTest {
 
     @Test
     public void createPost() throws Exception {
-        Post post = new Post(null,"Title","Body");
+
+        PostDAO post = new PostDAO(null,"Title","Body",null,false,null,null);
 
         Gson gson = new Gson();
         String json = gson.toJson(post);
@@ -127,14 +129,15 @@ public class PostControllerTest {
 
     @Test
     public void updatePost() throws Exception {
-        Post post = new Post(null,"Title","Body");
+
+        Post post = new Post(null,"Title","Body",null,new Date(),null,true,false,null,null,null);
 
         Gson gson = new Gson();
         String json = gson.toJson(post);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/post").header("Authorization","Bearer "+token)
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test

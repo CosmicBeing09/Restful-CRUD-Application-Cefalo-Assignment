@@ -3,7 +3,6 @@ package com.crud.model.dao;
 import com.crud.model.Tag;
 import com.crud.model.User;
 import lombok.*;
-
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -28,19 +27,15 @@ public class PostDAO {
     @NotNull
     private String body;
 
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date publishDate;
 
     @NotNull
-    private Boolean isPublished;
-
-    @NotNull
     private Boolean isDrafted;
 
-    private Set<Tag> tags = new HashSet<>();
+    private Set<Tag> existingTags = new HashSet<>();
 
-    private Set<Tag> alternateTags = new HashSet<>();
+    private Set<Tag> newTags = new HashSet<>();
 
     public PostDAO(String title,String body,User user,Date date){
         this.title = title;

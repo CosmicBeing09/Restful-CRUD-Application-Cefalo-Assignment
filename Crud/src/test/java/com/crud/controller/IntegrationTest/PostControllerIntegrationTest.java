@@ -5,6 +5,7 @@ import com.crud.controller.helperModel.TokenHelper;
 import com.crud.jwt.models.JwtRequest;
 import com.crud.model.Post;
 import com.crud.model.User;
+import com.crud.model.dao.PostDAO;
 import com.crud.repository.PostRepository;
 import com.crud.repository.UserRepository;
 import com.google.gson.Gson;
@@ -71,7 +72,7 @@ public class PostControllerIntegrationTest {
 
     @Test
     public void createPost() throws Exception {
-        Post post = new Post(null,"Title","Body");
+        PostDAO post = new PostDAO(null,"Title","Body",null,false,null,null);
 
         Gson gson = new Gson();
         String json = gson.toJson(post);

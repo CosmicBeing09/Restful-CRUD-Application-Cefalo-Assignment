@@ -55,7 +55,7 @@ WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         httpSecurity.csrf().disable()
 
-                .authorizeRequests().antMatchers("/user/authenticate","/user/register","/posts","/posts/size","/posts/search","/h2-console/**","/uploadFile","/downloadFile/**","/posts/tag/**").permitAll().
+                .authorizeRequests().antMatchers("/user/authenticate","/user/register","/posts","/posts/size","/posts/search","/h2-console/**","/uploadFile","/downloadFile/**","/posts/tag/**","/post/view/**").permitAll().
                         anyRequest().authenticated().and().
                         exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement().
                         sessionCreationPolicy(SessionCreationPolicy.STATELESS);

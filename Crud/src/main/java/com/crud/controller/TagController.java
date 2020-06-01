@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 public class TagController {
 
@@ -32,8 +33,14 @@ public class TagController {
     }
 
     @DeleteMapping(value = "/posts/tag/{tagId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
-    public ResponseEntity deleteTag(@PathVariable("tagId")Long tagId){
-        return tagService.deleteTag(tagId)? new ResponseEntity<>("Deleted",HttpStatus.OK)
+    public ResponseEntity deleteTagFromAllPostOfUser(@PathVariable("tagId")Long tagId,@RequestParam("userId")String userId){
+        return tagService.deleteTagFromAllPostOfUser(tagId,userId)? new ResponseEntity<>("Deleted",HttpStatus.OK)
+                :new ResponseEntity<>("No content",HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping(value = "/post/tag",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
+    public ResponseEntity deleteTagFromPost(@RequestParam("postId")Long postId,@RequestParam("tagId")Long tagId){
+        return tagService.deleteTagFromPost(postId,tagId)? new ResponseEntity<>("Deleted",HttpStatus.OK)
                 :new ResponseEntity<>("No content",HttpStatus.NOT_FOUND);
     }
 }
