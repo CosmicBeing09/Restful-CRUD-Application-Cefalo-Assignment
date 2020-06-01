@@ -8,6 +8,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperationInvocationContext;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import java.util.*;
 
@@ -65,6 +66,7 @@ public class CustomCacheResolver implements CacheResolver {
 
         //get the list
         if(entry!=null) {
+            try {
             List<Post> postList = entry.getValue();
 
             if (method.contains("update")) {
@@ -95,6 +97,9 @@ public class CustomCacheResolver implements CacheResolver {
 
             //update the cache!! :D
             cache.put(entry.getKey(), postList);
+        }catch (Exception e){
+                return new ArrayList<>(Collections.singletonList(cacheManager.getCache(CACHE_NAME)));
+            }
         }
 
         return new ArrayList<>(Collections.singletonList(cacheManager.getCache(CACHE_NAME)));

@@ -83,7 +83,7 @@ public class PostControllerTest {
     @Test
     public void createPost() throws Exception {
 
-        PostDAO post = new PostDAO(null,"Title","Body",null,false,null,null);
+        PostDAO post = new PostDAO("Title","Body",false);
 
         Gson gson = new Gson();
         String json = gson.toJson(post);
@@ -130,7 +130,8 @@ public class PostControllerTest {
     @Test
     public void updatePost() throws Exception {
 
-        Post post = new Post(null,"Title","Body",null,new Date(),null,true,false,null,null,null);
+        User user = new User("raihan123","raihan","rai123");
+        Post post = new Post("Title","Body",user,new Date(),false);
 
         Gson gson = new Gson();
         String json = gson.toJson(post);
