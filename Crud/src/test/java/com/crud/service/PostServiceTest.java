@@ -101,7 +101,7 @@ public class PostServiceTest {
     @Test
     public void updatePost() {
         User user = new User("raihan123","raihan","rai123");
-        Post post = new Post(-2000L,"Test title","Test Body",new Date(),new Date(),user,true,false,null,null,0);
+        Post post = new Post(-2000L,"Test title","Test Body",user,new Date(),false);
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUserId(),user.getPassword(),new ArrayList<>());
 

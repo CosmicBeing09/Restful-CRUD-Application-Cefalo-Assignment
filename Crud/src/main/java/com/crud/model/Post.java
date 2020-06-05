@@ -21,7 +21,7 @@ import java.util.Set;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @JacksonXmlRootElement(localName = "post")
-public class Post implements Serializable {
+public class Post implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,8 +45,6 @@ public class Post implements Serializable {
     private Date publishDate;
 
     @ManyToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "user_id",nullable = false)
-    @JsonManagedReference @JsonIgnore
     private User user;
 
     private Boolean isPublished;
@@ -61,6 +59,13 @@ public class Post implements Serializable {
     private List<Comment> comments;
 
     private Integer noOfViews;
+
+    @NotNull
+    @Version
+    private Long version;
+
+    @ManyToMany
+    private Set<User> authors = new HashSet<>();
 
     public Post(Long id,String title,String body){
         this.id = id;
@@ -84,6 +89,15 @@ public class Post implements Serializable {
     }
 
     public Post(String title,String body,User user,Date publishDate,Boolean isDrafted){
+        this.title = title;
+        this.body = body;
+        this.user = user;
+        this.publishDate = publishDate;
+        this.isDrafted = isDrafted;
+    }
+
+    public Post(Long id,String title,String body,User user,Date publishDate,Boolean isDrafted){
+        this.id = id;
         this.title = title;
         this.body = body;
         this.user = user;

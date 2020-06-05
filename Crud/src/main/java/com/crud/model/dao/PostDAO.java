@@ -37,15 +37,16 @@ public class PostDAO {
 
     private Set<Tag> newTags = new HashSet<>();
 
+    private String[] authorsId;
+
+    public PostDAO(String title,String body,Boolean isDrafted){
+        this.title = title;
+        this.body = body;
+        this.isDrafted = isDrafted;
+    }
+
     public PostDAO(String title,String body,User user,Date date){
         this.title = title;
         this.body = body;
-    }
-
-    public PostDAO(Long id,String title,String body,User user,Date date){
-        this.id = id;
-        this.title = title;
-        this.body = body;
-
     }
 }
