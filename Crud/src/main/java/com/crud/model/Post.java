@@ -64,6 +64,13 @@ public class Post implements Serializable{
     @Version
     private Long version;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastEditedAt;
+
+    @ManyToOne
+    private User lastEditedBy;
+
+
     @ManyToMany
     private Set<User> authors = new HashSet<>();
 

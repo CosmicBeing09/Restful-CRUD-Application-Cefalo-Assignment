@@ -47,9 +47,11 @@ public class PostService {
 
         Set<User> authors = new HashSet<>();
 
-            for(String id : postDAO.getAuthorsId()){
-                Optional<User> user = userRepository.findById(id);
-                user.ifPresent(authors::add);
+            if(postDAO.getAuthorsId()!= null) {
+                for (String id : postDAO.getAuthorsId()) {
+                    Optional<User> user = userRepository.findById(id);
+                    user.ifPresent(authors::add);
+                }
             }
             post.setAuthors(authors);
 
@@ -65,6 +67,7 @@ public class PostService {
         post.setIsDrafted(postDAO.getIsDrafted());
         post.setPublishDate(postDAO.getPublishDate());
         post.setNoOfViews(0);
+        post.setLastEditedAt(new Date());
 
 
         Set<Tag> finalTagSet = new HashSet<>();
@@ -88,6 +91,7 @@ public class PostService {
 
         return tempUser.map(t -> {
             post.setUser(t);
+            post.setLastEditedBy(t);
             postRepository.save(post);
             log.info("Post Created");
             return true;
@@ -131,7 +135,7 @@ public class PostService {
 
             if(userDetails.getUsername().equals(temp.getUser().getUserId()) || temp.getAuthors().contains(currentUser)) {
 
-                try {
+
                 if (post.getTitle().replaceAll("\\s+", "").isEmpty()) {
                     post.setTitle(temp.getTitle());
                 }
@@ -141,20 +145,21 @@ public class PostService {
 
                 post.setDate(temp.getDate());
                 post.setUser(temp.getUser());
+                post.setLastEditedBy(currentUser);
+                post.setLastEditedAt(new Date());
                 post.setTags(temp.getTags());
                 //post.setPublishDate(temp.getPublishDate());
                 post.setComments(temp.getComments());
                 post.setNoOfViews(temp.getNoOfViews());
                 post.setAuthors(temp.getAuthors());
 
-                if (post.getPublishDate().before(new Date()))
+                if (post.getPublishDate().before(new Date()) && !post.getIsDrafted())
                     post.setIsPublished(true);
                 else post.setIsPublished(false);
 
                 postRepository.save(post);
                 log.info("Post Updated");
                 return true;
-            }catch (OptimisticLockingFailureException e){return false;}
             }
             else{
                 log.error("Post Update Failed");

@@ -47,7 +47,7 @@ public  class PostRepositoryTest{
 
     @Test
     public void testFindAllPostByUserId() {
-        assertEquals(postRepository.findAllPostByUserId("raihan123").size(),3);
+        assertEquals(postRepository.findAllByUser_UserId("raihan123").size(),3);
     }
 
     @Test
