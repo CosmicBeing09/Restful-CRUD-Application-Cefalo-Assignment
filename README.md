@@ -41,6 +41,30 @@
    > gradle bootRun
 
 
+# Basic Features
+ * Story Creation
+    * Save as a draft
+    * Set a date to publish the story
+* Story Updation
+  * Unpulbish story
+  * Save as draft
+  * Set a date to publish further
+* Story deletion
+* Get published story
+* Get a particular story
+* Get story of a particular user
+* Create Tag
+* Add tags to story
+* Get post by a particular tag
+* Add authors to a story
+* Get the stories having author access
+* Add comment
+* Delete comment
+* Get most commented story
+* Get trending topics (tags)
+* Search story
+* Get the size of published stories
+* Application level caching ...
 
 
 
@@ -1246,4 +1270,108 @@ tagId : NUMBER
   Deleted
 }
 ``` 
+
+
+
+# File 
  
+ ### POST  `/uploadFile`
+ 
+  ### Request body Scheme (form-data): 
+   file : YOUR_FILE
+  
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Authorization : Bearer "YOUR TOKEN"
+``` 
+
+ ### Request Body (form-data): 
+ 
+ ``` 
+file : YOUR FILE
+```
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+{
+    "url": "http://localhost:8080/downloadFile/image.jpg"
+}
+```  
+
+
+### POST  `/uploadMultipleFiles`
+ 
+  ### Request body Scheme (form-data): 
+   files : YOUR_FILES
+  
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Authorization : Bearer "YOUR TOKEN"
+``` 
+
+ ### Request Body (form-data): 
+ 
+ ``` 
+files : YOUR FILES
+```
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "url": "http://localhost:8080/downloadFile/Image1.jpg"
+    },
+    {
+        "url": "http://localhost:8080/downloadFile/Image2.PNG"
+    },
+    {
+        "url": "http://localhost:8080/downloadFile/Image3.jpg"
+    }
+]
+```
+
+
+### GET  `/downloadFile/{fileName:.+}`
+ 
+ * fileNmae.EXTENSION : (type : string)
+ 
+  ### Request body Scheme (form-data): 
+   files : YOUR_FILES
+  
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+
+
+ ### Response Body (200 OK) :
+
+```
+IMAGE
+```
+
+
