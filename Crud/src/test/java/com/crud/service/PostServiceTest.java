@@ -63,7 +63,7 @@ public class PostServiceTest {
 
         Mockito.when(postRepository.findById(any(Long.class))).thenReturn(Optional.of(post));
         Mockito.when(postRepository.searchPost(any(String.class),any(Pageable.class))).thenReturn(postList);
-        Mockito.when(postRepository.findAllPostByUserId(any(String.class))).thenReturn(postList);
+        Mockito.when(postRepository.findAllByUser_UserId(any(String.class))).thenReturn(postList);
 
         Mockito.when(postRepository.findAllByIsDraftedFalseAndIsPublishedTrue()).thenReturn(postList);
     }

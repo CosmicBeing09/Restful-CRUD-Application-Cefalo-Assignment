@@ -4,6 +4,7 @@ import com.crud.model.Post;
 import com.crud.model.dao.PostDAO;
 import com.crud.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -72,8 +73,12 @@ public class PostController{
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
         }
 
-        return  postService.updatePost(post, (UserDetails) authentication.getPrincipal())? new ResponseEntity<>("Updated Successfully",HttpStatus.OK)
-                :new ResponseEntity<>("No content",HttpStatus.BAD_REQUEST);
+        try {
+            return  postService.updatePost(post, (UserDetails) authentication.getPrincipal())? new ResponseEntity<>("Updated Successfully",HttpStatus.OK)
+                    :new ResponseEntity<>("No content",HttpStatus.BAD_REQUEST);
+        }catch (OptimisticLockingFailureException e){ return  new ResponseEntity<>("Post already updated! Get or Reload the page again and try again!",
+                HttpStatus.CONFLICT);}
+
     }
 
     @GetMapping(value = "/user-posts/{userId}",produces = {"application/json","application/xml"},consumes = {"application/json","application/xml"})
