@@ -72,7 +72,7 @@ public class PostControllerIntegrationTest {
 
     @Test
     public void createPost() throws Exception {
-        PostDAO post = new PostDAO(null,"Title","Body",null,false,null,null);
+        PostDAO post = new PostDAO("Title","Body",false);
 
         Gson gson = new Gson();
         String json = gson.toJson(post);

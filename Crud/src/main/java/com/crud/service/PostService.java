@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.*;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -44,6 +45,17 @@ public class PostService {
 
         Post post = new Post();
 
+        Set<User> authors = new HashSet<>();
+
+            if(postDAO.getAuthorsId()!= null) {
+                for (String id : postDAO.getAuthorsId()) {
+                    Optional<User> user = userRepository.findById(id);
+                    user.ifPresent(authors::add);
+                }
+            }
+            post.setAuthors(authors);
+
+
         if(postDAO.getPublishDate()==null) postDAO.setPublishDate(new Date());
 
         if(postDAO.getPublishDate().before(new Date()))
@@ -55,6 +67,7 @@ public class PostService {
         post.setIsDrafted(postDAO.getIsDrafted());
         post.setPublishDate(postDAO.getPublishDate());
         post.setNoOfViews(0);
+        post.setLastEditedAt(new Date());
 
 
         Set<Tag> finalTagSet = new HashSet<>();
@@ -78,6 +91,7 @@ public class PostService {
 
         return tempUser.map(t -> {
             post.setUser(t);
+            post.setLastEditedBy(t);
             postRepository.save(post);
             log.info("Post Created");
             return true;
@@ -105,19 +119,23 @@ public class PostService {
     }
 
     public List<Post> retrieveAllPostByUserId(String userId){
-        return postRepository.findAllPostByUserId(userId);
+        //return postRepository.findAllPostByUserId(userId);
+        return postRepository.findAllByUser_UserId(userId);
     }
 
 
     @CachePut(key = "#post.id",cacheResolver = "customCacheResolver")
     public Boolean updatePost(Post post, UserDetails userDetails){
-        System.out.println(post.getId());
+        //System.out.println(post.getId());
 
+        User currentUser = userRepository.getOne(userDetails.getUsername());
         Optional<Post> tempPost = postRepository.findById(post.getId());
 
         return tempPost.map(temp -> {
 
-            if(userDetails.getUsername().equals(temp.getUser().getUserId())) {
+            if(userDetails.getUsername().equals(temp.getUser().getUserId()) || temp.getAuthors().contains(currentUser)) {
+
+
                 if (post.getTitle().replaceAll("\\s+", "").isEmpty()) {
                     post.setTitle(temp.getTitle());
                 }
@@ -127,12 +145,16 @@ public class PostService {
 
                 post.setDate(temp.getDate());
                 post.setUser(temp.getUser());
+                post.setLastEditedBy(currentUser);
+                post.setLastEditedAt(new Date());
                 post.setTags(temp.getTags());
                 //post.setPublishDate(temp.getPublishDate());
                 post.setComments(temp.getComments());
                 post.setNoOfViews(temp.getNoOfViews());
-                if(post.getPublishDate().before(new Date()))
-                post.setIsPublished(true);
+                post.setAuthors(temp.getAuthors());
+
+                if (post.getPublishDate().before(new Date()) && !post.getIsDrafted())
+                    post.setIsPublished(true);
                 else post.setIsPublished(false);
 
                 postRepository.save(post);
@@ -150,11 +172,12 @@ public class PostService {
     @CachePut(key = "#postId",cacheResolver = "customCacheResolver")
     public Boolean deletePost(Long postId,UserDetails userDetails){
 
+        User currentUser = userRepository.getOne(userDetails.getUsername());
         Optional<Post> tempPost = postRepository.findById(postId);
 
         try {
             if(tempPost.isPresent()){
-               if(tempPost.get().getUser().getUserId().equals(userDetails.getUsername())){
+               if(tempPost.get().getUser().getUserId().equals(userDetails.getUsername()) || tempPost.get().getAuthors().contains(currentUser)){
                    postRepository.deleteById(postId);
                    log.info("Post Deleted");
                    return true;
@@ -188,6 +211,11 @@ public class PostService {
         allPostPublished.sort(Comparator.comparingLong(post -> post.getComments().size()));
         Collections.reverse(allPostPublished);
         return allPostPublished.subList(0,Math.min(count,allPostPublished.size()));
+    }
+
+    public List<Post> getAllEditorPostByUserId(Integer pageNo,Integer pageSize,String userId){
+        Pageable pageable = PageRequest.of(pageNo,pageSize, Sort.by("date").descending());
+        return postRepository.findAllByAuthors_UserIdAndIsDraftedFalseAndIsPublishedTrue(pageable,userId).toList();
     }
 
     public Integer incrementView(Long postId){

@@ -1,14 +1,15 @@
 package com.crud.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -25,10 +26,14 @@ public class User{
     @NotNull
     private String password;
 
-//@OneToMany(mappedBy = "user")
-//@JsonBackReference
-//@JsonIgnore
-//private List<Post> posts;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "authors")
+    private Set<Post> authorsPosts = new HashSet<>();
 
+    public User(String userId,String name,String password){
+        this.userId = userId;
+        this.name = name;
+        this.password = password;
+    }
 
 }

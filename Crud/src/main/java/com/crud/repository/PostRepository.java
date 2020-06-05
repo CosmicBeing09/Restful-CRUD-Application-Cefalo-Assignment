@@ -20,7 +20,6 @@ public interface PostRepository extends PagingAndSortingRepository<Post,Long> {
     @Query(value = "select p from post  p where p.id = :id")
     Post getOneById(Long id);
 
-
     @Query("select p from post p order by p.date")
     List<Post> findAll();
 
@@ -32,4 +31,8 @@ public interface PostRepository extends PagingAndSortingRepository<Post,Long> {
     List<Post> findAllByIsDraftedFalseAndIsPublishedTrue();
 
     List<Post> findAllByIsDraftedFalseAndIsPublishedFalse();
+
+    Page<Post> findAllByAuthors_UserIdAndIsDraftedFalseAndIsPublishedTrue(Pageable pageable,String userId);
+
+    List<Post> findAllByUser_UserId(String userId);
 }
