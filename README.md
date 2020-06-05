@@ -50,7 +50,7 @@
 
 ### POST  `/user/register`
 
-### Request body Scheme: 
+ ### Request body Scheme: 
  
  
  
@@ -67,7 +67,7 @@
     }
 
  
-### Response Status
+ ### Response Status
 
 Status Code | Message
 ------------ | -------------
@@ -82,7 +82,7 @@ Content-Type : application/json
 Accept : application/json
 ``` 
  
-### Request Body: 
+ ### Request Body: 
 ``` 
  {
 	"userId" : "raihan123",
@@ -130,7 +130,7 @@ Content-Type : application/json
 Accept : application/json
 ``` 
  
-### Request Body: 
+ ### Request Body: 
  
  ``` 
  {
@@ -140,7 +140,7 @@ Accept : application/json
 ```
  
  
-### Response Body (200 OK) :
+ ### Response Body (200 OK) :
 
 ```
 {
@@ -164,7 +164,23 @@ Accept : application/json
 
     body*		     string
                      max: 10000
-                     nullable: false   
+                     nullable: false 
+                     
+    publishDate*      string
+                     format : YYYY-MM-dd
+                     nullable : false
+    
+    isDrafted*        Boolean
+                     nullable: false
+    
+    existingTags      Array
+                     nullable: true
+    
+    newTags          Array
+                     nullable: true
+    
+    authorsId        Array
+                     nullable: true
     }
  
   ### Response Status
@@ -175,29 +191,1059 @@ Status Code | Message
 400 | Bad Request
 401 | unauthorized
 
-### Request Headers: 
+ ### Request Headers: 
  
  ``` 
 Content-Type : application/json
 Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
 ``` 
  
-### Request Body: 
+ ### Request Body: 
  
  ``` 
- {
-	"title" : "rUt ultrices ultrices enim. Curabitur sit amet mauris",
-	"body" : "Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus"
+{
+	"title" : "Test Title",
+	"body" : "Test Body",
+	"publishDate" : "2020-04-27",
+	"isDrafted" : false,
+	"existingTags" :  [{
+		      "id"   : 1,
+		      "name" : "Tag 1"
+	},{
+		      "id"  : 2,
+		      "name" : "Tag 2"
+	}],
+	"newTags" : [{
+		      "name" : "Tag 1"
+	},{
+		      "name" : "Tag 2"
+	}],
+	"authorsId" : ["jessica124"] 
 }
 ```
  
  
-### Response Body (201 OK) :
+ ### Response Body (201 OK) :
 
 ```
 {
     Post Created
 }
 ``` 
+
+
+### PUT  `/post`
  
+  ### Request body Scheme: 
+ 
+ 
+ 
+    {
+    version*         number
+                     nullable : false
+    
+    title*		     string
+                     max: 250
+                     nullable: false
+
+    body*		     string
+                     max: 10000
+                     nullable: false 
+                     
+    publishDate*      string
+                     format : YYYY-MM-dd
+                     nullable : false
+    
+    isDrafted*        Boolean
+                     nullable: false
+    }
+ 
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+201 | Created
+400 | Bad Request
+401 | unauthorized
+412 | pre-condition failed
+409 | conflict
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+If-Match : "VERSION NUMBER"
+``` 
+ 
+ ### Request Body: 
+ 
+ ``` 
+{
+	"version" : 1,
+	"id" : 5,
+	"title" : "Title Updated",
+	"body" : "Body Updated",
+	"isDrafted" : false,
+	"publishDate" : "2020-02-27"
+}
+```
+ 
+ 
+ ### Response Body (409 Conflict) :
+
+```
+{
+    Post already updated! Get or Reload the post again and try again!
+}
+``` 
+
+
+### DELETE  `/post/{postId}`
+ * postId : (type : number)
+ 
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+400 | Bad Request
+401 | Unauthorized
+404 | Not Found
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+{
+    Deleted
+}
+``` 
+
+### GET  `/posts`
+ 
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+
+ ### Request Params: 
+ 
+ ``` 
+pageNo : NUMBER
+pageSize : NUMBER
+``` 
+
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "id": 4,
+        "title": "Title 1",
+        "body": "Body 1",
+        "date": "2020-06-05T14:33:18.906+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user123",
+            "name": "User123",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [],
+        "noOfViews": 0,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:18.891+0000",
+        "lastEditedBy": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": []
+    },
+    {
+        "id": 3,
+        "title": "Title 2",
+        "body": "Body 2",
+        "date": "2020-06-05T14:33:16.014+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [],
+        "noOfViews": 0,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:15.978+0000",
+        "lastEditedBy": {
+            "userId": "user123",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": ["user123","user124"]
+    }
+]
+``` 
+
+
+### GET  `/post/{postId}`
+ 
+ * postId : (type : number)
+ 
+ 
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+
+ 
+ ### Response Body (200 OK) :
+
+```
+    {
+        "id": 4,
+        "title": "Title 1",
+        "body": "Body 1",
+        "date": "2020-06-05T14:33:18.906+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user123",
+            "name": "User123",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [],
+        "noOfViews": 0,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:18.891+0000",
+        "lastEditedBy": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": ["user125","user126"]
+    }
+```
+
+### GET  `/user-posts/{userId}`
+ 
+ * userId : (type : string)
+ 
+ 
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "id": 4,
+        "title": "Title 1",
+        "body": "Body 1",
+        "date": "2020-06-05T14:33:18.906+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user123",
+            "name": "User123",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [],
+        "noOfViews": 0,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:18.891+0000",
+        "lastEditedBy": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": []
+    },
+    {
+        "id": 3,
+        "title": "Title 2",
+        "body": "Body 2",
+        "date": "2020-06-05T14:33:16.014+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user123",
+            "name": "User123",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [],
+        "noOfViews": 0,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:15.978+0000",
+        "lastEditedBy": {
+            "userId": "user123",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": ["user123","user124"]
+    }
+]
+```
+
+### GET  `/posts/editor-post/{userId}`
+
+  * userId : (type : string)
+`
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+
+ ### Request Params: 
+ 
+ ``` 
+pageNo : NUMBER
+pageSize : NUMBER
+``` 
+
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "id": 4,
+        "title": "Title 1",
+        "body": "Body 1",
+        "date": "2020-06-05T14:33:18.906+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user123",
+            "name": "User123",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [],
+        "noOfViews": 0,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:18.891+0000",
+        "lastEditedBy": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": ["user124","user125"]
+    },
+    {
+        "id": 3,
+        "title": "Title 2",
+        "body": "Body 2",
+        "date": "2020-06-05T14:33:16.014+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [],
+        "noOfViews": 0,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:15.978+0000",
+        "lastEditedBy": {
+            "userId": "user123",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": ["user123","user124"]
+    }
+]
+```
+
+### GET  `/posts/search`
+
+`
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+
+ ### Request Params: 
+ 
+ ``` 
+pageNo : NUMBER
+pageSize : NUMBER
+test : String
+``` 
+
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "id": 3,
+        "title": "Title 2",
+        "body": "Body 2",
+        "date": "2020-06-05T14:33:16.014+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [],
+        "noOfViews": 0,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:15.978+0000",
+        "lastEditedBy": {
+            "userId": "user123",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": ["user123","user124"]
+    }
+]
+```
+
+### PUT  `/post/view/{postId}`
+ * postId : (type : number)
+`
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+``` 
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+25
+```
+
+### GET  `/posts/mostCommented`
+
+`
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+``` 
+
+ ### Request Params: 
+ 
+ ``` 
+count : NUMBER
+``` 
+
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "id": 3,
+        "title": "Title 2",
+        "body": "Body 2",
+        "date": "2020-06-05T14:33:16.014+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [
+        {
+            "id": 5,
+            "text": "Comment 1",
+            "user": {
+                "userId": "user123",
+                "name": "User123",
+                "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+            }
+        },
+        {
+            "id": 6,
+            "text": "Comment 2",
+            "user": {
+                "userId": "user124",
+                "name": "User124",
+                "password": "$2a$10$1SI5IWKg4sSfefemC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+            }
+        },
+        {
+            "id": 7,
+            "text": "Comment 3",
+            "user": {
+                "userId": "user123",
+                "name": "User123",
+                "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+            }
+        }
+    ],
+        "noOfViews": 22,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:15.978+0000",
+        "lastEditedBy": {
+            "userId": "user123",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": ["user123","user124"]
+    }
+]
+```
+
+### GET  `/posts/size`
+`
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+``` 
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+25
+```
+
+### GET  `/posts/flush-cache`
+`
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+Hard Reloaded
+```
+
+# Comment
+ 
+ ### POST  `/post/comment`
+ 
+  ### Request body Scheme: 
+    {
+    string
+    max: 1000
+    nullable: false
+  }
+  
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+201 | Created
+400 | Bad Request
+401 | unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : text/plain
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+ ### Request Params: 
+ 
+ ``` 
+userId : String
+postId : NUMBER
+``` 
+
+ ### Request Body: 
+ 
+ ``` 
+{
+  Test Comment
+}
+```
+ 
+ 
+ ### Response Body (200 OK) :
+
+```
+{
+    Comment added
+}
+``` 
+
+### DELETE  `/post/comment`
+ 
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+400 | Bad Request
+401 | Unauthorized
+404 | Not Found
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+ 
+  ### Request Params: 
+ 
+ ``` 
+postId : NUMBER
+commentId : NUMBER
+``` 
+ 
+ ### Response Body (200 OK) :
+
+```
+{
+    Comment Deleted
+}
+``` 
+
+# Tag
+ 
+ ### GET  `/posts/tags`
+ 
+  
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+401 | Unauthorized
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "id": 1,
+        "name": "Tag 2"
+    },
+    {
+        "id": 2,
+        "name": "Tag 1"
+    }
+]
+``` 
+
+### GET  `/posts/tag/{name}`
+  * name : (type : string)
+  
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+``` 
+
+  ### Request Params: 
+ 
+ ``` 
+pageNo : NUMBER
+pageSize : NUMBER
+``` 
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "id": 3,
+        "title": "Title 2",
+        "body": "Body 2",
+        "date": "2020-06-05T14:33:16.014+0000",
+        "publishDate": "2020-04-27T00:00:00.000+0000",
+        "user": {
+            "userId": "user124",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "isPublished": true,
+        "isDrafted": false,
+        "tags": [
+            {
+                "id": 1,
+                "name": "Tag 2"
+            },
+            {
+                "id": 2,
+                "name": "Tag 1"
+            }
+        ],
+        "comments": [
+        {
+            "id": 5,
+            "text": "Comment 1",
+            "user": {
+                "userId": "user123",
+                "name": "User123",
+                "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+            }
+        },
+        {
+            "id": 6,
+            "text": "Comment 2",
+            "user": {
+                "userId": "user124",
+                "name": "User124",
+                "password": "$2a$10$1SI5IWKg4sSfefemC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+            }
+        },
+        {
+            "id": 7,
+            "text": "Comment 3",
+            "user": {
+                "userId": "user123",
+                "name": "User123",
+                "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+            }
+        }
+    ],
+        "noOfViews": 22,
+        "version": 0,
+        "lastEditedAt": "2020-06-05T14:33:15.978+0000",
+        "lastEditedBy": {
+            "userId": "user123",
+            "name": "User124",
+            "password": "$2a$10$1SI5IWKg4sSmC4K35bslLOcR5i0MuPvDKH5oPTp/SzdqLoLTIluCO"
+        },
+        "authors": ["user123","user124"]
+    }
+]
+``` 
+
+### GET  `/posts/tag/trending`
+ 
+  
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+200 | OK
+400 | Bad Request
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+``` 
+  ### Request Params: 
+ 
+ ``` 
+num : NUMBER
+```
+ 
+ ### Response Body (200 OK) :
+
+```
+[
+    {
+        "id": 1,
+        "name": "Tag 2"
+    },
+    {
+        "id": 2,
+        "name": "Tag 1"
+    }
+]
+```
+
+### DELETE  `/posts/tag/{tagId}`
+ * tagId : (type : number)
+ 
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+400 | Bad Request
+401 | Unauthorized
+404 | Not Found
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+ 
+  ### Request Params: 
+ 
+ ``` 
+userId : NUMBER
+``` 
+ 
+ ### Response Body (200 OK) :
+
+```
+{
+  Deleted
+}
+``` 
+
+ 
+ ### DELETE  `/posts/tag`
+ 
+  ### Response Status
+
+Status Code | Message
+------------ | -------------
+400 | Bad Request
+401 | Unauthorized
+404 | Not Found
+
+ ### Request Headers: 
+ 
+ ``` 
+Content-Type : application/json
+Accept : application/json
+Authorization : Bearer "YOUR TOKEN"
+``` 
+ 
+  ### Request Params: 
+ 
+ ``` 
+postId : NUMBER
+tagId : NUMBER
+``` 
+ 
+ ### Response Body (200 OK) :
+
+```
+{
+  Deleted
+}
+``` 
  
