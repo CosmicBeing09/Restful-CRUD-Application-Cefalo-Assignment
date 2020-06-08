@@ -248,7 +248,7 @@ Authorization : Bearer "YOUR TOKEN"
 ```
  
  
- ### Response Body (201 OK) :
+ ### Response Body (201 Created) :
 
 ```
 {
